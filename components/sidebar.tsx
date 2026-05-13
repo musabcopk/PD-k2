@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import {
   LayoutDashboard,
   Briefcase,
@@ -15,45 +16,55 @@ import {
 } from "lucide-react"
 
 const navItems = [
-  { icon: LayoutDashboard, label: "Overview", href: "/", active: true },
+  { icon: LayoutDashboard, label: "Overview", href: "/" },
   {
     icon: Briefcase,
     label: "Portfolio",
-    href: "#",
+    href: "/portfolio",
     submenu: [
-      { label: "PKR Assets", href: "#" },
-      { label: "USDT Assets", href: "#" },
-      { label: "PKR Wallet", href: "#" },
-      { label: "USDT Wallet", href: "#" },
+      { label: "PKR Assets", href: "/portfolio/pkr-assets" },
+      { label: "USDT Assets", href: "/portfolio/usdt-assets" },
+      { label: "PKR Wallet", href: "/portfolio/pkr-wallet" },
+      { label: "USDT Wallet", href: "/portfolio/usdt-wallet" },
     ],
   },
   {
     icon: FolderKanban,
     label: "Projects",
-    href: "#",
+    href: "/projects",
     submenu: [
-      { label: "Enrolled", href: "#" },
-      { label: "Upcoming", href: "#" },
-      { label: "Future", href: "#" },
+      { label: "Enrolled", href: "/projects/enrolled" },
+      { label: "Upcoming", href: "/projects/upcoming" },
+      { label: "Future", href: "/projects/future" },
     ],
   },
   {
     icon: CheckSquare,
     label: "Tasks",
-    href: "#",
+    href: "/tasks",
     submenu: [
-      { label: "Weekly", href: "#" },
-      { label: "Monthly", href: "#" },
-      { label: "Yearly", href: "#" },
+      { label: "Weekly", href: "/tasks/weekly" },
+      { label: "Monthly", href: "/tasks/monthly" },
+      { label: "Yearly", href: "/tasks/yearly" },
     ],
   },
-  { icon: Wrench, label: "Toolkit", href: "#" },
-  { icon: TrendingUp, label: "Market", href: "#" },
-  { icon: Bot, label: "AI Advisor", href: "#" },
+  { icon: Wrench, label: "Toolkit", href: "/toolkit" },
+  { icon: TrendingUp, label: "Market", href: "/market" },
+  { icon: Bot, label: "AI Advisor", href: "/ai-advisor" },
 ]
 
 export function Sidebar() {
   const [expandedItems, setExpandedItems] = useState<string[]>(["Portfolio", "Projects", "Tasks"])
+  const pathname = usePathname()
+
+  const isActive = (href: string) => {
+    if (href === "/") return pathname === "/"
+    return pathname.startsWith(href)
+  }
+
+  const isSubmenuActive = (submenu: { label: string; href: string }[]) => {
+    return submenu.some((item) => pathname === item.href)
+  }
 
   const toggleExpand = (label: string) => {
     setExpandedItems((prev) =>
@@ -73,57 +84,65 @@ export function Sidebar() {
 
       {/* Navigation */}
       <nav className="flex-1 px-3 py-2">
-        {navItems.map((item) => (
-          <div key={item.label}>
-            {item.submenu ? (
-              <>
-                <button
-                  onClick={() => toggleExpand(item.label)}
-                  className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm transition-colors ${
-                    item.active
+        {navItems.map((item) => {
+          const active = item.submenu ? isSubmenuActive(item.submenu) : isActive(item.href)
+          
+          return (
+            <div key={item.label}>
+              {item.submenu ? (
+                <>
+                  <button
+                    onClick={() => toggleExpand(item.label)}
+                    className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm transition-colors ${
+                      active
+                        ? "text-primary bg-primary/10"
+                        : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <item.icon className="w-5 h-5" />
+                      <span>{item.label}</span>
+                    </div>
+                    <ChevronRight
+                      className={`w-4 h-4 transition-transform ${
+                        expandedItems.includes(item.label) ? "rotate-90" : ""
+                      }`}
+                    />
+                  </button>
+                  {expandedItems.includes(item.label) && (
+                    <div className="ml-8 mt-1 space-y-1">
+                      {item.submenu.map((subItem) => (
+                        <Link
+                          key={subItem.label}
+                          href={subItem.href}
+                          className={`block px-3 py-2 text-sm transition-colors ${
+                            pathname === subItem.href
+                              ? "text-primary"
+                              : "text-muted-foreground hover:text-foreground"
+                          }`}
+                        >
+                          {subItem.label}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </>
+              ) : (
+                <Link
+                  href={item.href}
+                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${
+                    active
                       ? "text-primary bg-primary/10"
                       : "text-muted-foreground hover:text-foreground hover:bg-secondary"
                   }`}
                 >
-                  <div className="flex items-center gap-3">
-                    <item.icon className="w-5 h-5" />
-                    <span>{item.label}</span>
-                  </div>
-                  <ChevronRight
-                    className={`w-4 h-4 transition-transform ${
-                      expandedItems.includes(item.label) ? "rotate-90" : ""
-                    }`}
-                  />
-                </button>
-                {expandedItems.includes(item.label) && (
-                  <div className="ml-8 mt-1 space-y-1">
-                    {item.submenu.map((subItem) => (
-                      <Link
-                        key={subItem.label}
-                        href={subItem.href}
-                        className="block px-3 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                      >
-                        {subItem.label}
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </>
-            ) : (
-              <Link
-                href={item.href}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${
-                  item.active
-                    ? "text-primary bg-primary/10"
-                    : "text-muted-foreground hover:text-foreground hover:bg-secondary"
-                }`}
-              >
-                <item.icon className="w-5 h-5" />
-                <span>{item.label}</span>
-              </Link>
-            )}
-          </div>
-        ))}
+                  <item.icon className="w-5 h-5" />
+                  <span>{item.label}</span>
+                </Link>
+              )}
+            </div>
+          )
+        })}
       </nav>
 
       {/* Social Links */}
