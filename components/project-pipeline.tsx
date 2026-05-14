@@ -8,21 +8,21 @@ const pipeline = [
 
 export function ProjectPipeline() {
   return (
-    <div className="bg-card border border-border rounded-xl p-5">
+    <div className="bg-card border border-border rounded-xl p-4 lg:p-5">
       <div className="flex items-center gap-2 mb-4">
         <FolderKanban className="w-5 h-5 text-primary" />
         <h3 className="font-semibold text-foreground">Project Pipeline</h3>
       </div>
       <div className="space-y-4">
         {pipeline.map((item) => (
-          <div key={item.label}>
+          <div key={item.label} className="group">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm text-muted-foreground">{item.label}</span>
               <span className="text-sm font-medium text-foreground">{item.count}</span>
             </div>
             <div className="h-2 bg-secondary rounded-full overflow-hidden">
               <div
-                className={`h-full ${item.color} rounded-full transition-all`}
+                className={`h-full ${item.color} rounded-full transition-all duration-500 group-hover:opacity-80`}
                 style={{ width: `${item.percentage}%` }}
               />
             </div>
