@@ -51,7 +51,7 @@ export function MarketSessions() {
   }, [])
 
   return (
-    <div className="bg-card border border-border rounded-xl p-4 lg:p-5">
+    <div className="bg-card border border-border rounded-xl p-5">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <Clock className="w-5 h-5 text-primary" />
@@ -61,19 +61,19 @@ export function MarketSessions() {
           {data.time} <span className="text-xs">PKT</span>
         </span>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <div className="grid grid-cols-3 gap-3">
         {data.sessions.map((session) => (
           <div
             key={session.name}
-            className="group bg-secondary/50 border border-border rounded-lg p-3 lg:p-4 hover:border-primary/50 transition-all duration-300"
+            className="bg-secondary/50 border border-border rounded-lg p-4"
           >
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs text-muted-foreground tracking-wider">
                 {session.name}
               </span>
               <div
-                className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                  session.status === "OPEN" ? "bg-primary animate-pulse" : "bg-muted-foreground"
+                className={`w-2 h-2 rounded-full ${
+                  session.status === "OPEN" ? "bg-primary" : "bg-muted-foreground"
                 }`}
               />
             </div>
